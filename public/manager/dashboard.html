@@ -61,6 +61,7 @@
         tbody.appendChild(row);
       });
     }
+
     async function updateRequest(id, status) {
       const token = localStorage.getItem('token');
       const res = await fetch(`/leaves/${id}`, {
@@ -72,9 +73,21 @@
         body: JSON.stringify({ status })
       });
       const result = await res.text();
-      document.getElementById('managerStatus').innerText = result;
+      const managerStatusDiv = document.getElementById('managerStatus');
+      // Only notification color feedback change here:
+      if (res.ok && result.toLowerCase().includes("notification sent")) {
+        managerStatusDiv.style.color = "green";
+      } else if (res.ok && result.toLowerCase().includes("email not sent")) {
+        managerStatusDiv.style.color = "orange";
+      } else if (res.ok) {
+        managerStatusDiv.style.color = "green";
+      } else {
+        managerStatusDiv.style.color = "red";
+      }
+      managerStatusDiv.innerText = result;
       fetchRequests();
     }
+
     fetchRequests();
   </script>
 </body>
